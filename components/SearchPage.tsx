@@ -68,7 +68,7 @@ export default function SearchPage() {
     setHasSearched(true)
 
     try {
-      const [giphyData/*, wikipediaData*/] = await Promise.all([search(query, 20)/*, searchWikipedia(query, 10)*/])
+      const [giphyData/*, wikipediaData*/] = await Promise.all([search(debouncedQuery, 20)/*, searchWikipedia(query, 10)*/])
       console.log("Giphy data:", giphyData)
 
       setGiphyResults(giphyData)
