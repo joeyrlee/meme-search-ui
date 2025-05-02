@@ -1,7 +1,7 @@
 # Mini Search
 
 ## Description
-Build a React web application with a rich UI/UX that allows the user to search across a specific website.
+Build a React web application with a rich UI/UX that allows the user to search across a specific website
 
 ## Requirements
 1. Receive user input and perform a search using a publicly accessible search API of your choice. Some examples:
