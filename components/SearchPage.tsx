@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import InstantSearchResults from "@/components/InstantSearchResults"
 import GiphyResults from "@/components/GiphyResults"
-import { searchGiphy } from "@/lib/search"
-import { GiphyResult } from "@/lib/search.types"
+import { GiphyResult } from "@/types/search"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
+import { search } from "@/actions/search"
 
 export default function SearchPage() {
+  // TODO: refactor into a custom hook
   const [query, setQuery] = useState("")
   // const [debouncedQuery, setDebouncedQuery] = useState("")
   const [showInstantResults, setShowInstantResults] = useState(false)
@@ -24,7 +25,7 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchInstantResults = async () => {
       if (query.length > 0) {
-        const giphyData = await searchGiphy(query, 8)
+        const giphyData = await search(query, 8)
         // const wikipediaData = await searchWikipedia(debouncedQuery, 8)
 
         setInstantGiphyResults(giphyData)
@@ -48,7 +49,8 @@ export default function SearchPage() {
     setHasSearched(true)
 
     try {
-      const [giphyData/*, wikipediaData*/] = await Promise.all([searchGiphy(query, 20)/*, searchWikipedia(query, 10)*/])
+      const [giphyData/*, wikipediaData*/] = await Promise.all([search(query, 20)/*, searchWikipedia(query, 10)*/])
+      console.log("Giphy data:", giphyData)
 
       setGiphyResults(giphyData)
       // setWikipediaResults(wikipediaData)
@@ -107,7 +109,7 @@ export default function SearchPage() {
                     setQuery(selectedQuery)
                     setShowInstantResults(false)
                     // Trigger search with the selected query
-                    searchGiphy(selectedQuery, 20).then(setGiphyResults)
+                    search(selectedQuery, 20).then(setGiphyResults)
                     // searchWikipedia(selectedQuery, 10).then(setWikipediaResults)
                     setHasSearched(true)
                   }}

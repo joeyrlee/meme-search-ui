@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { Search } from "lucide-react"
-import { GiphyResult } from "@/lib/search.types"
+import { GiphyResult } from "@/types/search"
 
 type InstantSearchResultsProps = {
   giphyResults: GiphyResult[];
@@ -30,7 +30,7 @@ export default function InstantSearchResults({ giphyResults, onResultClick }: In
                   onClick={() => onResultClick(result.title)}
                 >
                   <div className="relative h-20 w-full rounded overflow-hidden">
-                    <Image src={result.image} alt={result.title} fill className="object-cover" />
+                    <Image src={result.images.fixed_height.url} alt={result.title} fill className="object-cover" unoptimized />
                   </div>
                   <p className="text-xs mt-1 truncate">{result.title}</p>
                 </div>

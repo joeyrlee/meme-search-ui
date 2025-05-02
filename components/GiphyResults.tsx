@@ -2,9 +2,10 @@
 
 import Image from "next/image"
 import { ExternalLink } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { GiphyResult } from "@/lib/search.types"
+import { GiphyResult } from "@/types/search"
+import NextLink from "next/link"
 
 type GiphyResultsProps = {
   results: GiphyResult[];
@@ -26,20 +27,20 @@ export default function GiphyResults({ results }: GiphyResultsProps) {
           <Card key={result.id} className="overflow-hidden">
             <CardContent className="p-2">
               <div className="relative aspect-square rounded-md overflow-hidden">
-                <Image src={result.image || "/placeholder.svg"} alt={result.title} fill className="object-cover" />
+                <Image aria-describedby={`image-title-${result.id}`} src={result.images.fixed_height.url} alt={result.alt_text} fill className="object-cover" unoptimized />
               </div>
             </CardContent>
             <CardFooter className="p-2 pt-0 flex flex-col items-start gap-2">
-              <p className="text-sm font-medium line-clamp-1">{result.title}</p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full text-xs"
-                onClick={() => window.open(result.url, "_blank")}
+                <h2 id={`image-title-${result.id}`} title={result.title} className="text-sm font-medium line-clamp-1 h-5" style={{ minHeight: '20px' }}>{result.title}</h2>
+              <NextLink
+                className={`${buttonVariants({ variant: "outline", size: "sm" })} w-full text-left`}
+                role="link"
+                href={result.url}
+                target="_blank"
               >
                 <ExternalLink className="w-3 h-3 mr-1" />
                 View on GIPHY
-              </Button>
+              </NextLink>
             </CardFooter>
           </Card>
         ))}
