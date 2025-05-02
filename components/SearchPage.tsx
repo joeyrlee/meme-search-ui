@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useDeferredValue } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -10,12 +10,13 @@ import WikipediaResults from "./WikipediaResults"
 import { GiphyResult, WikipediaResult } from "@/types/search"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 import { search } from "@/actions/search"
+import debounce from 'lodash/debounce';
 
 export default function SearchPage() {
   // TODO: refactor into a custom hook
   const [query, setQuery] = useState("")
   const [lastSearchedQuery, setLastSearchedQuery] = useState("") // band-aid - see below TODO: dive deeper to investigate possible removal
-  const deferredQuery = useDeferredValue(query)
+  const [debouncedQuery, setDebouncedQuery] = useState("")
   const [showInstantResults, setShowInstantResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
   const [giphyResults, setGiphyResults] = useState<GiphyResult[]>([])
@@ -25,12 +26,30 @@ export default function SearchPage() {
   const [instantWikipediaResults, setInstantWikipediaResults] = useState<WikipediaResult[]>([])
   const searchInputRef = useRef<HTMLDivElement>(null)
 
+   // Create a debounced function that updates debouncedQuery
+   const debouncedSetQuery = useCallback(
+    debounce((value: string) => {
+      setDebouncedQuery(value)
+    }, 100), // reasonable lower bound for debounce
+    []
+  )
+
+  // Update debounced value when query changes
+  useEffect(() => {
+    debouncedSetQuery(query)
+    
+    // Cancel the debounce on cleanup
+    return () => {
+      debouncedSetQuery.cancel()
+    }
+  }, [query, debouncedSetQuery])
+
   // Fetch instant search results
   useEffect(() => {
     const fetchInstantResults = async () => {
-      if (deferredQuery.length > 0 && deferredQuery !== lastSearchedQuery) {
+      if (debouncedQuery.length > 0 && debouncedQuery !== lastSearchedQuery) {
         // Show instant results only if the query is different from the last searched query
-        const results = await search(deferredQuery, 8)
+        const results = await search(debouncedQuery, 8)
 
         setInstantGiphyResults(results.giphyData)
         setInstantWikipediaResults(results.wikipediaData)
@@ -41,7 +60,7 @@ export default function SearchPage() {
     }
 
     fetchInstantResults()
-  }, [deferredQuery])
+  }, [debouncedQuery])
   
   // Handle click outside to close instant results
   useEffect(() => {
