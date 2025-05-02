@@ -5,3 +5,10 @@ export type GiphyResult = {
   url: string;
   alt_text: string;
 };
+
+export type WikipediaResult = {
+  id: string;
+  title: string;
+  snippet: string;
+  url: string;
+}

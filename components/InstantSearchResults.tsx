@@ -1,15 +1,16 @@
 "use client"
 
 import Image from "next/image"
-import { Search } from "lucide-react"
-import { GiphyResult } from "@/types/search"
+import { Info, Search } from "lucide-react"
+import { GiphyResult, WikipediaResult } from "@/types/search"
 
 type InstantSearchResultsProps = {
   giphyResults: GiphyResult[];
+  wikipediaResults: WikipediaResult[];
   onResultClick: (title: string) => void;
 };
 
-export default function InstantSearchResults({ giphyResults, onResultClick }: InstantSearchResultsProps) {
+export default function InstantSearchResults({ giphyResults, wikipediaResults, onResultClick }: InstantSearchResultsProps) {
   const hasResults = giphyResults.length > 0;
 
   if (!hasResults) return null
@@ -33,6 +34,26 @@ export default function InstantSearchResults({ giphyResults, onResultClick }: In
                     <Image src={result.images.fixed_height.url} alt={result.title} fill className="object-cover" unoptimized />
                   </div>
                   <p className="text-xs mt-1 truncate">{result.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {wikipediaResults.length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium px-2 py-1 flex items-center gap-1 text-gray-500 dark:text-gray-400">
+              <Info className="w-3 h-3" /> Wikipedia Context
+            </h3>
+            <div className="mt-1">
+              {wikipediaResults.map((result) => (
+                <div
+                  key={result.id}
+                  className="px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                  onClick={() => onResultClick(result.title)}
+                >
+                  <p className="font-medium text-sm">{result.title}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{result.snippet}</p>
                 </div>
               ))}
             </div>
