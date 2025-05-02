@@ -5,15 +5,20 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import InstantSearchResults from "@/components/InstantSearchResults"
+import GiphyResults from "@/components/GiphyResults"
 import { searchGiphy } from "@/lib/search"
 import { GiphyResult } from "@/lib/search.types"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 
 export default function SearchPage() {
   const [query, setQuery] = useState("")
+  // const [debouncedQuery, setDebouncedQuery] = useState("")
   const [showInstantResults, setShowInstantResults] = useState(false)
-  const [isSearching] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
+  const [giphyResults, setGiphyResults] = useState<GiphyResult[]>([])
+  const [hasSearched, setHasSearched] = useState(false)
   const [instantGiphyResults, setInstantGiphyResults] = useState<GiphyResult[]>([])
-  const searchInputRef = useRef(null)
+  const searchInputRef = useRef<HTMLDivElement>(null)
 
   // Fetch instant search results
   useEffect(() => {
@@ -36,8 +41,38 @@ export default function SearchPage() {
   // Handle full search
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // could perform a larger search on submit a la Google
+    if (!query.trim()) return
+
+    setIsSearching(true)
+    setShowInstantResults(false)
+    setHasSearched(true)
+
+    try {
+      const [giphyData/*, wikipediaData*/] = await Promise.all([searchGiphy(query, 20)/*, searchWikipedia(query, 10)*/])
+
+      setGiphyResults(giphyData)
+      // setWikipediaResults(wikipediaData)
+    } catch (error) {
+      console.error("Search error:", error)
+    } finally {
+      setIsSearching(false)
+    }
   }
+
+  // Handle click outside to close instant results
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+      searchInputRef.current && 
+      !searchInputRef.current.contains(event.target as Node)
+      ) {
+      setShowInstantResults(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -67,6 +102,15 @@ export default function SearchPage() {
               {showInstantResults && (
                 <InstantSearchResults
                   giphyResults={instantGiphyResults}
+                  // wikipediaResults={instantWikipediaResults}
+                  onResultClick={(selectedQuery) => {
+                    setQuery(selectedQuery)
+                    setShowInstantResults(false)
+                    // Trigger search with the selected query
+                    searchGiphy(selectedQuery, 20).then(setGiphyResults)
+                    // searchWikipedia(selectedQuery, 10).then(setWikipediaResults)
+                    setHasSearched(true)
+                  }}
                 />
               )}
             </div>
@@ -75,6 +119,23 @@ export default function SearchPage() {
             </Button>
           </form>
         </div>
+
+        {hasSearched && (
+          <div className="mt-8">
+            <Tabs defaultValue="giphy" className="w-full">
+              <TabsList className="w-full" /*className="grid w-full grid-cols-2"*/>
+                <TabsTrigger value="giphy">GIPHY Results</TabsTrigger>
+                {/* <TabsTrigger value="wikipedia">Wikipedia Context</TabsTrigger> */}
+              </TabsList>
+              <TabsContent value="giphy" className="mt-4">
+                <GiphyResults results={giphyResults} />
+              </TabsContent>
+              {/* <TabsContent value="wikipedia" className="mt-4">
+                <WikipediaResults results={wikipediaResults} query={query} />
+              </TabsContent> */}
+            </Tabs>
+          </div>
+        )}
       </div>
     </div>
   )

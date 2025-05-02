@@ -4,7 +4,12 @@ import Image from "next/image"
 import { Search } from "lucide-react"
 import { GiphyResult } from "@/lib/search.types"
 
-export default function InstantSearchResults({ giphyResults }: { giphyResults: GiphyResult[] }) {
+type InstantSearchResultsProps = {
+  giphyResults: GiphyResult[];
+  onResultClick: (title: string) => void;
+};
+
+export default function InstantSearchResults({ giphyResults, onResultClick }: InstantSearchResultsProps) {
   const hasResults = giphyResults.length > 0;
 
   if (!hasResults) return null
@@ -22,7 +27,7 @@ export default function InstantSearchResults({ giphyResults }: { giphyResults: G
                 <div
                   key={result.id}
                   className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                  // onClick={() => onResultClick(result.title)}
+                  onClick={() => onResultClick(result.title)}
                 >
                   <div className="relative h-20 w-full rounded overflow-hidden">
                     <Image src={result.image} alt={result.title} fill className="object-cover" />
