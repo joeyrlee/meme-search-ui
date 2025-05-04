@@ -45,9 +45,11 @@ async function fetchGiphyResults(query: string, limit: number): Promise<GiphyRes
   const key = process.env.GIPHY_API_KEY;
   const base_url = 'https://api.giphy.com/v1/gifs/search';
 
+  // enable caching with Fetch and revalidate every hour
   const response = await fetch(`${base_url}?api_key=${key}&q=${encodeURIComponent(query)}&limit=${limit}`, {
     // cache the response for 60 seconds to avoid hitting the API too often and making redundant requests
-    next: { revalidate: 60 },
+    next: { revalidate: 3600 },
+    cache: 'force-cache',
   });
   
   if (!response.ok) {
