@@ -99,16 +99,22 @@ export default function SearchPage() {
     }
   }
 
-  const handleInstantSearchResultClick = (selectedQuery: string) => {
+  const handleInstantSearchResultClick = async (selectedQuery: string) => {
     setQuery(selectedQuery);
     setLastSearchedQuery(selectedQuery); // prevent instant results from showing again
+
     // Trigger search with the selected query
-    search(selectedQuery, 20).then((results) => {
+    try {
+      const results = await search(query, 20)
+      
       setGiphyResults(results.giphyData)
       setWikipediaResults(results.wikipediaData)
-    })
-    setHasSearched(true)
-    setShowInstantResults(false)
+      setHasSearched(true)
+      setShowInstantResults(false)
+      //TODO: could add error state for conditionally rendering error ui
+    } catch (error) {
+      console.error("Search error:", error)
+    }
   }
 
   /* TODO: handle error ui */
