@@ -2,7 +2,7 @@
 
 import { ExternalLink } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { WikipediaResult } from "@/types/search"
 
 type WikipediaResultsProps = {
@@ -22,17 +22,23 @@ export default function WikipediaResults({ results }: WikipediaResultsProps) {
     <div className="space-y-4">
       {results.map((result) => (
         <Card key={result.id}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{result.title}</CardTitle>
+          <CardHeader>
+            <CardTitle className="text-lg"><h2>{result.title}</h2></CardTitle>
           </CardHeader>
           <CardContent className="pb-2">
             <p className="text-sm text-gray-700 dark:text-gray-300">{result.snippet}</p>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" size="sm" onClick={() => window.open(result.url, "_blank")}>
-              <ExternalLink className="w-4 h-4 mr-2" />
+            <a
+              aria-label={`${result.title} on Wikipedia`}
+              className={`${buttonVariants({ variant: "outline", size: "sm" })} w-full text-left`}
+              role="link"
+              href={result.url}
+              target="_blank"
+            >
+              <ExternalLink className="w-3 h-3 mr-1" />
               Read on Wikipedia
-            </Button>
+            </a>
           </CardFooter>
         </Card>
       ))}

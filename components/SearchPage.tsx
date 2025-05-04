@@ -91,6 +91,7 @@ export default function SearchPage() {
       
       setGiphyResults(results.giphyData)
       setWikipediaResults(results.wikipediaData)
+      //TODO: could add error state for conditionally rendering error ui
     } catch (error) {
       console.error("Search error:", error)
     } finally {
@@ -109,6 +110,8 @@ export default function SearchPage() {
     setHasSearched(true)
     setShowInstantResults(false)
   }
+
+  /* TODO: handle error ui */
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -149,7 +152,7 @@ export default function SearchPage() {
           </form>
         </div>
 
-        {hasSearched && (
+        {hasSearched && !isSearching && (
           <div className="mt-8">
             <Tabs defaultValue="giphy" className="w-full">
               <TabsList className="w-full grid grid-cols-2">

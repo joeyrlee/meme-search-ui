@@ -5,7 +5,6 @@ import { ExternalLink } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { GiphyResult } from "@/types/search"
-import NextLink from "next/link"
 
 type GiphyResultsProps = {
   results: GiphyResult[];
@@ -27,12 +26,21 @@ export default function GiphyResults({ results }: GiphyResultsProps) {
           <Card key={result.id} className="overflow-hidden">
             <CardContent className="p-2">
               <div className="relative aspect-square rounded-md overflow-hidden">
-                <Image aria-describedby={`image-title-${result.id}`} src={result.images.fixed_height.url} alt={result.alt_text} fill className="object-cover" unoptimized />
+                <Image
+                  alt={result.alt_text}
+                  // alt text used if available else an aria-label used if no alt text
+                  {...(result.alt_text?.trim().length > 0 ? {} : { "aria-label": result.title })}
+                  src={result.images.fixed_height.url} 
+                  fill 
+                  className="object-cover" 
+                  unoptimized
+                />
               </div>
             </CardContent>
             <CardFooter className="p-2 pt-0 flex flex-col items-start gap-2">
-                <h2 id={`image-title-${result.id}`} title={result.title} className="text-sm font-medium line-clamp-1 h-5" style={{ minHeight: '20px' }}>{result.title}</h2>
-              <NextLink
+              <h2 title={result.title} className="text-sm font-semibold line-clamp-1 h-5" style={{ minHeight: '20px' }}>{result.title}</h2>
+              <a
+                aria-label={`${result.title} on GIPHY`}
                 className={`${buttonVariants({ variant: "outline", size: "sm" })} w-full text-left`}
                 role="link"
                 href={result.url}
@@ -40,7 +48,7 @@ export default function GiphyResults({ results }: GiphyResultsProps) {
               >
                 <ExternalLink className="w-3 h-3 mr-1" />
                 View on GIPHY
-              </NextLink>
+              </a>
             </CardFooter>
           </Card>
         ))}
