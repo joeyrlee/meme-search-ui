@@ -1,5 +1,16 @@
 # Mini Search
 
+A take-home exercise to build a search interface incorporating public APIs (Giphy and Wikipedia in my particular instance). The UX was inspired by Google with suggestions appearing in a popover while typing and then providing a more robust interface with tabs when the search is entered/submitted.
+<img width="1299" alt="Screenshot 2025-06-17 at 12 13 45 PM (2)" src="https://github.com/user-attachments/assets/35936e9c-7de9-428e-9537-8e320e2ce6f6" />
+<img width="1299" alt="Screenshot 2025-06-17 at 12 13 16 PM (2)" src="https://github.com/user-attachments/assets/55e2ee4c-d816-4c48-95b3-282dc510c8ab" />
+<img width="1296" alt="Screenshot 2025-06-17 at 12 13 39 PM (2)" src="https://github.com/user-attachments/assets/4825cdce-6928-42e3-88e4-b27f7c2b8d05" />
+
+You can see the project deployed with a rate-limited (beta) giphy api key at https://takehome-frontend-joeyl-navy.vercel.app/
+
+To run locally:
+1. Create a `.env.local` file and create a `GIPHY_API_KEY=<sign up for and put a giphy api key here>`
+2. Run `npm install && npm run dev`
+
 ## Description
 Build a React web application with a rich UI/UX that allows the user to search across a specific website
 
